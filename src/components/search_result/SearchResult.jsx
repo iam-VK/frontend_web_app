@@ -3,25 +3,33 @@ import axios from 'axios';
 import VideoPlayer from '../videoplayer/VideoPlayer';
 
 const SearchResult = ({ inputValue }) => {
-  const [searchResults, setSearchResults] = useState(null);
+  const [searchResults, setSearchResults] = useState([]);
   const [error, setError] = useState(null);
-  const [showVideo, setShowVideo] = useState(false);
-
+  const [showVideo, setShowVideo] = useState({});
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
         if (inputValue) {
-          const response = await axios.get(`http://localhost:5000/search/${inputValue}`);
-          setSearchResults(response.data);
+          const formData = new FormData();
+          formData.append('search_query', inputValue);
+
+          const response = await axios.post('http://localhost:5003/search', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          });
+
+          setSearchResults(response.data.results);
           setError(null);
-          setShowVideo(false); // Hide video initially
+          setShowVideo({}); // Hide all videos initially
         } else {
           // Clear search results and error when input value is empty
-          setSearchResults(null);
+          setSearchResults([]);
           setError(null);
         }
       } catch (error) {
-        setSearchResults(null);
+        setSearchResults([]);
         setError(error.message);
       }
     };
@@ -29,25 +37,28 @@ const SearchResult = ({ inputValue }) => {
     fetchData();
   }, [inputValue]);
 
-  const handleGetVideo = () => {
-    setShowVideo(true); // Show video when Get Video button is clicked
+  const handleGetVideo = (index) => {
+    setShowVideo(prevState => ({ ...prevState, [index]: true })); // Show video for the specific result
   };
 
   return (
     <div>
       {error && <div>Error: {error}</div>}
       
-      {searchResults && (
+      {searchResults.length > 0 && (
         <div>
           <h2>Search Results:</h2>
-          <p>File Name: {searchResults.file_name}</p>
-          <p>Category List: {searchResults.category_list}</p>
-          <p>File Path: {searchResults.file_path}</p>
-          <button onClick={handleGetVideo}>Get Video</button>
+          {searchResults.map((result, index) => (
+            <div key={index}>
+              <p>File Name: {result.file_name}</p>
+              <p>Category List: {result.category_list}</p>
+              <p>File Path: {result.file_path}</p>
+              <button onClick={() => handleGetVideo(index)}>Get Video</button>
+              {showVideo[index] && <VideoPlayer videoPath={result.file_path} />}
+            </div>
+          ))}
         </div>
       )}
-
-      {showVideo && searchResults && <VideoPlayer videoPath={searchResults.file_path} />}
     </div>
   );
 };
