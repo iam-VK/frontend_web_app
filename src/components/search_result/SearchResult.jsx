@@ -5,8 +5,8 @@ import VideoPlayer from '../videoplayer/VideoPlayer';
 const SearchResult = ({ inputValue }) => {
   const [searchResults, setSearchResults] = useState([]);
   const [error, setError] = useState(null);
-  const [showVideo, setShowVideo] = useState({});
-  
+  const [videoUrls, setVideoUrls] = useState({});
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -20,13 +20,39 @@ const SearchResult = ({ inputValue }) => {
             },
           });
 
+          console.log('Search response:', response.data);
+
           setSearchResults(response.data.results);
           setError(null);
-          setShowVideo({}); // Hide all videos initially
+
+          // Fetch video URLs for each result
+          response.data.results.forEach(async (result) => {
+            if (!videoUrls[result.file_name]) {
+              const videoFormData = new FormData();
+              videoFormData.append('file_name', result.file_name);
+
+              const videoResponse = await axios.post('http://127.0.0.1:5004/get_video', videoFormData, {
+                headers: {
+                  'Content-Type': 'multipart/form-data',
+                },
+                responseType: 'blob'  // Ensure we receive a Blob object
+              });
+
+              const videoUrl = URL.createObjectURL(videoResponse.data);  // Create URL from Blob
+              
+              console.log('Video response for', result.file_name, ':', videoUrl);
+
+              setVideoUrls(prevState => ({
+                ...prevState,
+                [result.file_name]: videoUrl  // Set Blob URL
+              }));
+            }
+          });
         } else {
           // Clear search results and error when input value is empty
           setSearchResults([]);
           setError(null);
+          setVideoUrls({});
         }
       } catch (error) {
         setSearchResults([]);
@@ -37,24 +63,28 @@ const SearchResult = ({ inputValue }) => {
     fetchData();
   }, [inputValue]);
 
-  const handleGetVideo = (index) => {
-    setShowVideo(prevState => ({ ...prevState, [index]: true })); // Show video for the specific result
-  };
+  useEffect(() => {
+    console.log('Updated videoUrls:', videoUrls);
+  }, [videoUrls]);
 
   return (
     <div>
       {error && <div>Error: {error}</div>}
-      
+
       {searchResults.length > 0 && (
         <div>
           <h2>Search Results:</h2>
           {searchResults.map((result, index) => (
             <div key={index}>
               <p>File Name: {result.file_name}</p>
-              <p>Category List: {result.category_list}</p>
-              <p>File Path: {result.file_path}</p>
-              <button onClick={() => handleGetVideo(index)}>Get Video</button>
-              {showVideo[index] && <VideoPlayer videoPath={result.file_path} />}
+              {videoUrls[result.file_name] ? (
+                <>
+                  <p>Video URL: {videoUrls[result.file_name]}</p>
+                  <VideoPlayer videoPath={videoUrls[result.file_name]} />
+                </>
+              ) : (
+                <p>Loading video...</p>
+              )}
             </div>
           ))}
         </div>
