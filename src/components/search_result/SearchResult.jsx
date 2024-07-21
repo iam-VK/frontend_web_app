@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import VideoPlayer from '../videoplayer/VideoPlayer';
+import './SearchResult.css'; // Import the CSS file
 
 const SearchResult = ({ inputValue }) => {
   const [searchResults, setSearchResults] = useState([]);
@@ -74,19 +75,20 @@ const SearchResult = ({ inputValue }) => {
       {searchResults.length > 0 && (
         <div>
           <h2>Search Results:</h2>
-          {searchResults.map((result, index) => (
-            <div key={index}>
-              <p>File Name: {result.file_name}</p>
-              {videoUrls[result.file_name] ? (
-                <>
-                  <p>Video URL: {videoUrls[result.file_name]}</p>
-                  <VideoPlayer videoPath={videoUrls[result.file_name]} />
-                </>
-              ) : (
-                <p>Loading video...</p>
-              )}
-            </div>
-          ))}
+          <div className="search-results-grid">
+            {searchResults.map((result, index) => (
+              <div key={index} className="video-item">
+                <p>File Name: {result.file_name}</p>
+                {videoUrls[result.file_name] ? (
+                  <>
+                    <VideoPlayer videoPath={videoUrls[result.file_name]} />
+                  </>
+                ) : (
+                  <p>Loading video...</p>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
