@@ -1,98 +1,165 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import VideoPlayer from '../videoplayer/VideoPlayer';
-import './SearchResult.css'; // Import the CSS file
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import VideoPlayer from "../videoplayer/VideoPlayer";
+import "./SearchResult.css"; // Import the CSS file
+
+
+import AspectRatio from '@mui/joy/AspectRatio';
+import Card from '@mui/joy/Card';
+import CardContent from '@mui/joy/CardContent';
+import CardOverflow from '@mui/joy/CardOverflow';
+import Divider from '@mui/joy/Divider';
+import Typography from '@mui/joy/Typography';
+
+
 
 const SearchResult = ({ inputValue }) => {
-  const [searchResults, setSearchResults] = useState([]);
-  const [error, setError] = useState(null);
-  const [videoUrls, setVideoUrls] = useState({});
+	const [searchResults, setSearchResults] = useState([]);
+	const [error, setError] = useState(null);
+	const [videoUrls, setVideoUrls] = useState({});
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (inputValue) {
-          const formData = new FormData();
-          formData.append('search_query', inputValue);
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				if (inputValue) {
+					const formData = new FormData();
+					formData.append("search_query", inputValue);
 
-          const response = await axios.post('http://localhost:5003/search', formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          });
+					const response = await axios.post(
+						"http://localhost:5003/search",
+						formData,
+						{
+							headers: {
+								"Content-Type": "multipart/form-data",
+							},
+						}
+					);
 
-          console.log('Search response:', response.data);
+					console.log("Search response:", response.data);
 
-          setSearchResults(response.data.results);
-          setError(null);
+					setSearchResults(response.data.results);
+					setError(null);
 
-          // Fetch video URLs for each result
-          response.data.results.forEach(async (result) => {
-            if (!videoUrls[result.file_name]) {
-              const videoFormData = new FormData();
-              videoFormData.append('file_name', result.file_name);
+					// Fetch video URLs for each result
+					response.data.results.forEach(async (result) => {
+						if (!videoUrls[result.file_name]) {
+							const videoFormData = new FormData();
+							videoFormData.append("file_name", result.file_name);
 
-              const videoResponse = await axios.post('http://127.0.0.1:5004/get_video', videoFormData, {
-                headers: {
-                  'Content-Type': 'multipart/form-data',
-                },
-                responseType: 'blob'  // Ensure we receive a Blob object
-              });
+							const videoResponse = await axios.post(
+								"http://127.0.0.1:5004/get_video",
+								videoFormData,
+								{
+									headers: {
+										"Content-Type": "multipart/form-data",
+									},
+									responseType: "blob", // Ensure we receive a Blob object
+								}
+							);
 
-              const videoUrl = URL.createObjectURL(videoResponse.data);  // Create URL from Blob
-              
-              console.log('Video response for', result.file_name, ':', videoUrl);
+							const videoUrl = URL.createObjectURL(videoResponse.data); // Create URL from Blob
 
-              setVideoUrls(prevState => ({
-                ...prevState,
-                [result.file_name]: videoUrl  // Set Blob URL
-              }));
-            }
-          });
-        } else {
-          // Clear search results and error when input value is empty
-          setSearchResults([]);
-          setError(null);
-          setVideoUrls({});
-        }
-      } catch (error) {
-        setSearchResults([]);
-        setError(error.message);
-      }
-    };
+							console.log(
+								"Video response for",
+								result.file_name,
+								":",
+								videoUrl
+							);
 
-    fetchData();
-  }, [inputValue]);
+							setVideoUrls((prevState) => ({
+								...prevState,
+								[result.file_name]: videoUrl, // Set Blob URL
+							}));
+						}
+					});
+				} else {
+					// Clear search results and error when input value is empty
+					setSearchResults([]);
+					setError(null);
+					setVideoUrls({});
+				}
+			} catch (error) {
+				setSearchResults([]);
+				setError(error.message);
+			}
+		};
 
-  useEffect(() => {
-    console.log('Updated videoUrls:', videoUrls);
-  }, [videoUrls]);
+		fetchData();
+	}, [inputValue]);
 
-  return (
-    <div>
-      {error && <div>Error: {error}</div>}
+	useEffect(() => {
+		console.log("Updated videoUrls:", videoUrls);
+	}, [videoUrls]);
 
-      {searchResults.length > 0 && (
-        <div>
-          <h2>Search Results:</h2>
-          <div className="search-results-grid">
-            {searchResults.map((result, index) => (
-              <div key={index} className="video-item">
-                <p>File Name: {result.file_name}</p>
-                {videoUrls[result.file_name] ? (
-                  <>
-                    <VideoPlayer videoPath={videoUrls[result.file_name]} />
-                  </>
-                ) : (
-                  <p>Loading video...</p>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
+	return (
+		<div>
+			{error && <div>Error: {error}</div>}
+
+			{searchResults.length > 0 && (
+				<div>
+					<h2>Search Results:</h2>
+					<div className="search-results-grid">
+						{searchResults.map((result, index) => (
+							<div key={index} className="video-item">
+								{/* <p>File Name: {result.file_name}</p> */}
+								{videoUrls[result.file_name] ? (
+									<>
+										<Card variant="outlined" sx={{ width: 320 }}>
+											<CardOverflow>
+												<AspectRatio ratio="2">
+													{/* <img
+                        src="https://images.unsplash.com/photo-1532614338840-ab30cf10ed36?auto=format&fit=crop&w=318"
+                        srcSet="https://images.unsplash.com/photo-1532614338840-ab30cf10ed36?auto=format&fit=crop&w=318&dpr=2 2x"
+                        loading="lazy"
+                        alt=""
+                      /> */}
+													<VideoPlayer
+														videoPath={videoUrls[result.file_name]}
+													/>
+												</AspectRatio>
+											</CardOverflow>
+											<CardContent>
+												<Typography level="title-md">
+													<p>File Name: {result.file_name}</p>
+												</Typography>
+												<Typography level="body-sm">California</Typography>
+											</CardContent>
+											<CardOverflow
+												variant="soft"
+												sx={{ bgcolor: "background.level1" }}
+											>
+												<Divider inset="context" />
+												<CardContent orientation="horizontal">
+													<Typography
+														level="body-xs"
+														textColor="text.secondary"
+														sx={{ fontWeight: "md" }}
+													>
+														6.3k views
+													</Typography>
+													<Divider orientation="vertical" />
+													<Typography
+														level="body-xs"
+														textColor="text.secondary"
+														sx={{ fontWeight: "md" }}
+													>
+														1 hour ago
+													</Typography>
+												</CardContent>
+											</CardOverflow>
+										</Card>
+										{/* <VideoPlayer videoPath={videoUrls[result.file_name]} /> */}
+									</>
+								) : (
+									<p>Loading video...</p>
+								)}
+							</div>
+						))}
+					</div>
+				</div>
+			)}
+		</div>
+	);
 };
 
 export default SearchResult;
