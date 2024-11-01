@@ -1,10 +1,10 @@
 import { TextareaAutosize as BaseTextareaAutosize } from '@mui/base/TextareaAutosize';
 import { styled } from '@mui/system';
-import "./body.css"
+import "./SearchFunc.css"
 import SearchResult from '../search_result/SearchResult.jsx';
 import React from 'react';
 
-function Body({ path })
+function SearchFunc({ path })
 {
   const [inputValue, setInputValue] = React.useState('');
   const handleInputChange = (event) =>
@@ -84,4 +84,4 @@ const TextareaAutosize = styled(BaseTextareaAutosize)(
 `,
 );
 
-export default Body
+export default SearchFunc

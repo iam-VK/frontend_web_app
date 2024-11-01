@@ -3,15 +3,12 @@ import axios from "axios";
 import VideoPlayer from "../videoplayer/VideoPlayer";
 import "./SearchResult.css"; // Import the CSS file
 
-
-import AspectRatio from '@mui/joy/AspectRatio';
-import Card from '@mui/joy/Card';
-import CardContent from '@mui/joy/CardContent';
-import CardOverflow from '@mui/joy/CardOverflow';
-import Divider from '@mui/joy/Divider';
-import Typography from '@mui/joy/Typography';
-
-
+import AspectRatio from "@mui/joy/AspectRatio";
+import Card from "@mui/joy/Card";
+import CardContent from "@mui/joy/CardContent";
+import CardOverflow from "@mui/joy/CardOverflow";
+import Divider from "@mui/joy/Divider";
+import Typography from "@mui/joy/Typography";
 
 const SearchResult = ({ inputValue }) => {
 	const [searchResults, setSearchResults] = useState([]);
@@ -22,17 +19,13 @@ const SearchResult = ({ inputValue }) => {
 		const fetchData = async () => {
 			try {
 				if (inputValue) {
-					const formData = new FormData();
-					formData.append("search_query", inputValue);
+					const params = {
+						query: inputValue,
+					};
 
-					const response = await axios.post(
+					const response = await axios.get(
 						"http://localhost:5003/search",
-						formData,
-						{
-							headers: {
-								"Content-Type": "multipart/form-data",
-							},
-						}
+						{params}
 					);
 
 					console.log("Search response:", response.data);
@@ -106,14 +99,9 @@ const SearchResult = ({ inputValue }) => {
 									<>
 										<Card variant="outlined" sx={{ width: 320 }}>
 											<CardOverflow>
-												<AspectRatio ratio="2">
-													{/* <img
-                        src="https://images.unsplash.com/photo-1532614338840-ab30cf10ed36?auto=format&fit=crop&w=318"
-                        srcSet="https://images.unsplash.com/photo-1532614338840-ab30cf10ed36?auto=format&fit=crop&w=318&dpr=2 2x"
-                        loading="lazy"
-                        alt=""
-                      /> */}
+												<AspectRatio ratio="1.5">
 													<VideoPlayer
+														className="video"
 														videoPath={videoUrls[result.file_name]}
 													/>
 												</AspectRatio>
@@ -122,7 +110,7 @@ const SearchResult = ({ inputValue }) => {
 												<Typography level="title-md">
 													<p>File Name: {result.file_name}</p>
 												</Typography>
-												<Typography level="body-sm">California</Typography>
+												<Typography level="body-sm">Matching Tags: {result.matching_tags}</Typography>
 											</CardContent>
 											<CardOverflow
 												variant="soft"
@@ -135,7 +123,7 @@ const SearchResult = ({ inputValue }) => {
 														textColor="text.secondary"
 														sx={{ fontWeight: "md" }}
 													>
-														6.3k views
+														Match Type: {result.match_type}
 													</Typography>
 													<Divider orientation="vertical" />
 													<Typography

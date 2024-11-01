@@ -2,6 +2,21 @@
     float: right;
     clear: right;
 }
+
 .homePage {
-	width: 100%;
+    width: 100%;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.title {
+    width: 100%;
+    text-align: center;
+}
+
+.home-parent {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
 }

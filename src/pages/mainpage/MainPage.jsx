@@ -1,6 +1,6 @@
 import './MainPage.css'
 import Header from "../../components/header/Header"
-import Body from "../../components/body/Body"
+import SearchFunc from "../../components/SearchFunc/SearchFunc"
 
 function MainPage()
 {
@@ -8,7 +8,7 @@ function MainPage()
         <div>
             <div className="appcontent">
                 <Header subtitle={"Find your videos"} />
-                <Body path={"search/"} />
+                <SearchFunc path={"search/"} />
             </div>
         </div>
     )

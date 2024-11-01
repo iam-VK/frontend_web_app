@@ -1,0 +1,17 @@
+/* Center-align the entire Tabs component */
+.tabs-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+/* Center-align content within each TabPanel */
+.tabpanel-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-self: center;
+    height: 100%;
+}
