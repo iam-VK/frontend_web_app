@@ -1,5 +1,5 @@
 import React from "react";
-import Header from "../../components/header/Header";
+import Header from "../../components/TitleBanner/TitleBanner";
 import SearchFunc from "../../components/SearchFunc/SearchFunc";
 import "./SearchPage.css";
 const SearchPage = () => {
@@ -8,7 +8,7 @@ const SearchPage = () => {
 			SearchPage
 			<div className="appcontent">
 				{/* <Header subtitle={"Find your data in seconds"} /> */}
-				<SearchFunc path={"search/"} />
+				<SearchFunc />
 			</div>
 		</div>
 	);

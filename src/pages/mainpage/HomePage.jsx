@@ -1,13 +1,13 @@
 import React from "react";
 import "./HomePage.css";
-import Header from "../../components/header/Header";
+import Header from "../../components/TitleBanner/TitleBanner";
 import Tabs from "../../components/tabs/Tabs";
 
 export default function HomePage() {
 	return (
 		<>
 			<div className="title">
-				<Header subtitle={"Local media search made easier"} />
+				<Header />
 			</div>
 			<div className="homepage">
 				<Tabs />

@@ -31,17 +31,29 @@ export default function Tabs() {
 						orientation="vertical"
 						aria-label="Vertical tabs example"
 					>
-						<Tab label="Search" value="1" sx={{ color: "white" }} />
-						<Tab label="Upload" value="2" sx={{ color: "white" }} />
+						<Tab label="Video Search" value="1" sx={{ color: "white" }} />
+						<Tab label="Document Search" value="2" sx={{ color: "white" }} />
+						<Tab label="Audio Search" value="3" sx={{ color: "white" }} />
+						<Tab label="Upload" value="4" sx={{ color: "white" }} />
 					</TabList>
 				</Box>
 				<Box sx={{ flexGrow: 1, p: 3 }}>
 					<TabPanel value="1">
 						<div className="tabpanel-content">
-							<SearchFunc path={"search/"} />
+							<SearchFunc />
 						</div>
 					</TabPanel>
 					<TabPanel value="2">
+						<div className="tabpanel-content">
+							<SearchFunc />
+						</div>
+					</TabPanel>
+					<TabPanel value="3">
+						<div className="tabpanel-content">
+							<SearchFunc />
+						</div>
+					</TabPanel>
+					<TabPanel value="4">
 						<div className="tabpanel-content">
 							<FileUpload />
 						</div>

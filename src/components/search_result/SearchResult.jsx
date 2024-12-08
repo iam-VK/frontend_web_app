@@ -23,10 +23,9 @@ const SearchResult = ({ inputValue }) => {
 						query: inputValue,
 					};
 
-					const response = await axios.get(
-						"http://localhost:5003/search",
-						{params}
-					);
+					const response = await axios.get("http://localhost:5003/search", {
+						params,
+					});
 
 					console.log("Search response:", response.data);
 
@@ -110,7 +109,9 @@ const SearchResult = ({ inputValue }) => {
 												<Typography level="title-md">
 													<p>File Name: {result.file_name}</p>
 												</Typography>
-												<Typography level="body-sm">Matching Tags: {result.matching_tags}</Typography>
+												<Typography level="body-sm">
+													Matching Tags: {result.matching_tags}
+												</Typography>
 											</CardContent>
 											<CardOverflow
 												variant="soft"
